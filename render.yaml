@@ -1,6 +1,6 @@
 services:
-  # FastAPI Backend Service
   - type: web
+    # FastAPI Backend Service
     name: prosora-sports-api
     env: python
     plan: starter
@@ -35,8 +35,8 @@ services:
     - key: SUPABASE_SERVICE_KEY
       value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4cWpqcWpxanFqcWpxanFqcWpxIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczNDk3MjgwMCwiZXhwIjoyMDUwNTQ4ODAwfQ.example_service_key
 
-  # Streamlit Frontend Service
   - type: web
+    # Streamlit Frontend Service
     name: prosora-sports-dashboard
     env: python
     plan: starter
