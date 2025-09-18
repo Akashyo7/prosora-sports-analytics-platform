@@ -27,11 +27,13 @@ services:
         value: true
       - key: CACHE_TTL
         value: 300
-    # Add your Supabase environment variables here
-    # - key: SUPABASE_URL
-    #   value: your_supabase_project_url
-    # - key: SUPABASE_KEY
-    #   value: your_supabase_anon_key
+    # Supabase environment variables
+    - key: SUPABASE_URL
+      value: https://ixqjjqjqjqjqjqjqjqjq.supabase.co
+    - key: SUPABASE_KEY
+      value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4cWpqcWpxanFqcWpxanFqcWpxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQ5NzI4MDAsImV4cCI6MjA1MDU0ODgwMH0.example_key
+    - key: SUPABASE_SERVICE_KEY
+      value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4cWpqcWpxanFqcWpxanFqcWpxIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczNDk3MjgwMCwiZXhwIjoyMDUwNTQ4ODAwfQ.example_service_key
 
   # Streamlit Frontend Service
   - type: web
