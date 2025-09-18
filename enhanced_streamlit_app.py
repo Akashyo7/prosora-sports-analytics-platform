@@ -180,7 +180,15 @@ def main():
         
         # Get fixtures
         with st.spinner("Loading fixtures..."):
-            fixtures = api.get_fixtures(league_code=league_code, days_ahead=7)
+            fixtures_data = api.get_fixtures(league_code=league_code, days_ahead=7)
+        
+        # Extract fixtures list from the response
+        if fixtures_data and isinstance(fixtures_data, dict) and 'fixtures' in fixtures_data:
+            fixtures = fixtures_data['fixtures']
+        elif fixtures_data and isinstance(fixtures_data, list):
+            fixtures = fixtures_data
+        else:
+            fixtures = []
         
         if fixtures:
             # Display fixtures with predictions
