@@ -1,65 +1,55 @@
 services:
-- type: web
-  # FastAPI Backend Service
-  name: prosora-sports-api
-  env: python
-  plan: starter
-  buildCommand: pip install -r requirements.txt
-  startCommand: uvicorn api_wrapper:app --host 0.0.0.0 --port $PORT
-  envVars:
-    - key: PYTHON_VERSION
-      value: 3.11.0
-    - key: FOOTBALL_DATA_API_KEY
-      value: 5722a0f62b6b4d27814dbd94239744b9
-    - key: FOOTBALL_DATA_BASE_URL
-      value: https://api.football-data.org/v4
-    - key: API_HOST
-      value: 0.0.0.0
-    - key: API_RELOAD
-      value: false
-    - key: ENVIRONMENT
-      value: production
-    - key: DEBUG
-      value: false
-    - key: LOG_LEVEL
-      value: INFO
-    - key: ENABLE_CACHING
-      value: true
-    - key: CACHE_TTL
-      value: 300
-    # Supabase environment variables
-    - key: SUPABASE_URL
-      value: https://ixqjjqjqjqjqjqjqjqjq.supabase.co
-    - key: SUPABASE_KEY
-      value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4cWpqcWpxanFqcWpxanFqcWpxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQ5NzI4MDAsImV4cCI6MjA1MDU0ODgwMH0.example_key
-    - key: SUPABASE_SERVICE_KEY
-      value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4cWpqcWpxanFqcWpxanFqcWpxIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczNDk3MjgwMCwiZXhwIjoyMDUwNTQ4ODAwfQ.example_service_key
+  - type: web
+    name: prosora-sports-api
+    env: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn api_wrapper:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.0"
+      - key: FOOTBALL_DATA_API_KEY
+        value: "5722a0f62b6b4d27814dbd94239744b9"
+      - key: FOOTBALL_DATA_BASE_URL
+        value: "https://api.football-data.org/v4"
+      - key: API_HOST
+        value: "0.0.0.0"
+      - key: API_RELOAD
+        value: "false"
+      - key: ENVIRONMENT
+        value: "production"
+      - key: DEBUG
+        value: "false"
+      - key: LOG_LEVEL
+        value: "INFO"
+      - key: ENABLE_CACHING
+        value: "true"
+      - key: CACHE_TTL
+        value: "300"
+      - key: SUPABASE_URL
+        value: "https://ixqjjqjqjqjqjqjqjqjq.supabase.co"
+      - key: SUPABASE_KEY
+        value: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4cWpqcWpxanFqcWpxanFqcWpxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQ5NzI4MDAsImV4cCI6MjA1MDU0ODgwMH0.example_key"
+      - key: SUPABASE_SERVICE_KEY
+        value: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4cWpqcWpxanFqcWpxanFqcWpxIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczNDk3MjgwMCwiZXhwIjoyMDUwNTQ4ODAwfQ.example_service_key"
 
-- type: web
-  # Streamlit Frontend Service
-  name: prosora-sports-dashboard
-  env: python
-  plan: starter
-  buildCommand: pip install -r requirements.txt
-  startCommand: streamlit run enhanced_streamlit_app.py --server.port $PORT --server.address 0.0.0.0
-  envVars:
-    - key: PYTHON_VERSION
-      value: 3.11.0
-    - key: API_BASE_URL
-      fromService:
-        type: web
-        name: prosora-sports-api
-        property: host
-    - key: STREAMLIT_SERVER_HEADLESS
-      value: true
-    - key: STREAMLIT_BROWSER_GATHER_USAGE_STATS
-      value: false
-    - key: STREAMLIT_SERVER_ENABLE_CORS
-      value: false
-
-# Database (if using Render PostgreSQL instead of Supabase)
-# databases:
-#   - name: prosora-sports-db
-#     plan: starter
-#     databaseName: prosora_sports
-#     user: prosora_user
+  - type: web
+    name: prosora-sports-dashboard
+    env: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: streamlit run enhanced_streamlit_app.py --server.port $PORT --server.address 0.0.0.0
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.0"
+      - key: API_BASE_URL
+        fromService:
+          type: web
+          name: prosora-sports-api
+          property: host
+      - key: STREAMLIT_SERVER_HEADLESS
+        value: "true"
+      - key: STREAMLIT_BROWSER_GATHER_USAGE_STATS
+        value: "false"
+      - key: STREAMLIT_SERVER_ENABLE_CORS
+        value: "false"
