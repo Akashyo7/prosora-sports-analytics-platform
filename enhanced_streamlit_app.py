@@ -259,7 +259,7 @@ def main():
                                 labels = ['Home Win', 'Draw', 'Away Win']
                                 
                                 fig = create_probability_chart(probs, labels, "Win Probabilities")
-                                st.plotly_chart(fig, use_container_width=True)
+                                st.plotly_chart(fig, use_container_width=True, key=f"win_prob_{fixture['home_team']}_{fixture['away_team']}")
                     
                     with col3:
                         st.markdown(f"**{fixture['away_team']}**")
@@ -319,7 +319,7 @@ def main():
                             labels = [f'{home_team} Win', 'Draw', f'{away_team} Win']
                             
                             fig = create_probability_chart(probs, labels, "Match Outcome Probabilities")
-                            st.plotly_chart(fig, use_container_width=True)
+                            st.plotly_chart(fig, use_container_width=True, key=f"match_outcome_{home_team}_{away_team}")
                 
                 with tab2:
                     if over_under:
@@ -330,7 +330,7 @@ def main():
                         ou_labels = ['Over 2.5', 'Under 2.5']
                         
                         fig = create_probability_chart(ou_probs, ou_labels, "Over/Under 2.5 Goals")
-                        st.plotly_chart(fig, use_container_width=True)
+                        st.plotly_chart(fig, use_container_width=True, key=f"over_under_{home_team}_{away_team}")
                         
                         # Additional insights
                         st.info(f"**Recommendation:** {'Over 2.5 Goals' if over_under['over_25_probability'] > 0.5 else 'Under 2.5 Goals'}")
