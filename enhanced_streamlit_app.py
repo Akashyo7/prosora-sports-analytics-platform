@@ -215,23 +215,33 @@ def main():
                             col_a, col_b, col_c = st.columns(3)
                             
                             with col_a:
+                                over_25_prob = prediction.get('over_25_probability', 0)
+                                over_25_display = f"{over_25_prob:.1%}" if over_25_prob is not None else "N/A"
                                 st.metric(
                                     "Over 2.5 Goals",
-                                    f"{prediction['over_25_probability']:.1%}",
+                                    over_25_display,
                                     delta=None
                                 )
                             
                             with col_b:
+                                home_goals = prediction.get('predicted_home_goals', 0)
+                                away_goals = prediction.get('predicted_away_goals', 0)
+                                if home_goals is not None and away_goals is not None:
+                                    score_display = f"{home_goals:.1f} - {away_goals:.1f}"
+                                else:
+                                    score_display = "N/A"
                                 st.metric(
                                     "Predicted Score",
-                                    f"{prediction['predicted_home_goals']:.1f} - {prediction['predicted_away_goals']:.1f}",
+                                    score_display,
                                     delta=None
                                 )
                             
                             with col_c:
+                                confidence = prediction.get('confidence_score', 0)
+                                confidence_display = f"{confidence:.1%}" if confidence is not None else "N/A"
                                 st.metric(
                                     "Confidence",
-                                    f"{prediction['confidence_score']:.1%}",
+                                    confidence_display,
                                     delta=None
                                 )
                             
