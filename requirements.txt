@@ -3,13 +3,13 @@
 
 # Core ML and Data Processing
 pandas>=1.5.0
-numpy==1.23.5
+numpy>=1.24.0
 scikit-learn>=1.1.0
 xgboost>=1.6.0
 scipy>=1.9.0
 
-# Deep Learning (from AIFootballPredictions)
-tensorflow==2.10
+# Deep Learning (from AIFootballPredictions) - Updated for Python 3.11 compatibility
+tensorflow>=2.12.0
 
 # Feature Selection (from AIFootballPredictions)
 mrmr_selection
