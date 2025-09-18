@@ -1,0 +1,63 @@
+services:
+  # FastAPI Backend Service
+  - type: web
+    name: prosora-sports-api
+    env: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn api_wrapper:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: FOOTBALL_DATA_API_KEY
+        value: 5722a0f62b6b4d27814dbd94239744b9
+      - key: FOOTBALL_DATA_BASE_URL
+        value: https://api.football-data.org/v4
+      - key: API_HOST
+        value: 0.0.0.0
+      - key: API_RELOAD
+        value: false
+      - key: ENVIRONMENT
+        value: production
+      - key: DEBUG
+        value: false
+      - key: LOG_LEVEL
+        value: INFO
+      - key: ENABLE_CACHING
+        value: true
+      - key: CACHE_TTL
+        value: 300
+    # Add your Supabase environment variables here
+    # - key: SUPABASE_URL
+    #   value: your_supabase_project_url
+    # - key: SUPABASE_KEY
+    #   value: your_supabase_anon_key
+
+  # Streamlit Frontend Service
+  - type: web
+    name: prosora-sports-dashboard
+    env: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: streamlit run enhanced_streamlit_app.py --server.port $PORT --server.address 0.0.0.0
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: API_BASE_URL
+        fromService:
+          type: web
+          name: prosora-sports-api
+          property: host
+      - key: STREAMLIT_SERVER_HEADLESS
+        value: true
+      - key: STREAMLIT_BROWSER_GATHER_USAGE_STATS
+        value: false
+      - key: STREAMLIT_SERVER_ENABLE_CORS
+        value: false
+
+# Database (if using Render PostgreSQL instead of Supabase)
+# databases:
+#   - name: prosora-sports-db
+#     plan: starter
+#     databaseName: prosora_sports
+#     user: prosora_user

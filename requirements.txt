@@ -1,0 +1,43 @@
+# Prosora Sports Analytics Platform Requirements
+# Combined dependencies from AIFootballPredictions and EPL-Predictor plus API requirements
+
+# Core ML and Data Processing
+pandas>=1.5.0
+numpy==1.23.5
+scikit-learn>=1.1.0
+xgboost>=1.6.0
+scipy>=1.9.0
+
+# Deep Learning (from AIFootballPredictions)
+tensorflow==2.10
+
+# Feature Selection (from AIFootballPredictions)
+mrmr_selection
+scikit-optimize
+
+# Visualization
+seaborn
+matplotlib
+
+# API Framework
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+pydantic>=2.0.0
+
+# Streamlit for UI
+streamlit>=1.28.0
+
+# HTTP Requests
+requests>=2.31.0
+
+# Database (for Supabase integration)
+supabase>=2.0.0
+psycopg2-binary
+
+# Development and Deployment
+python-multipart
+python-dotenv
+
+# Additional utilities
+python-dateutil
+pytz

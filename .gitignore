@@ -1,0 +1,191 @@
+# Prosora Sports Analytics Platform - .gitignore
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# PEP 582
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# Machine Learning Models
+*.pkl
+*.joblib
+*.h5
+*.hdf5
+models/*.pkl
+models/*.joblib
+AIFootballPredictions/models/*.pkl
+EPL-Predictor/models/*.pkl
+
+# Data files
+*.csv
+*.json
+data/
+raw_data/
+processed_data/
+AIFootballPredictions/data/
+EPL-Predictor/data/
+EPL-Predictor/engg_data/
+
+# Logs
+logs/
+*.log
+*.out
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Streamlit
+.streamlit/
+
+# FastAPI
+.pytest_cache/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# API Keys and Secrets
+secrets.json
+credentials.json
+service-account-key.json
+
+# Render specific
+.render/
+
+# Node modules (if any)
+node_modules/
+
+# Images (keep examples but ignore generated)
+*.png
+*.jpg
+*.jpeg
+*.gif
+!img/wizard.png
+!img/epl-long.png
+EPL-Predictor/img/
+
+# Backup files
+*.bak
+*.backup
+
+# Cache
+.cache/
+cache/
+
+# Local configuration
+local_config.py
+config_local.py
