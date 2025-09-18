@@ -124,12 +124,16 @@ def display_confidence_badge(confidence):
 
 def create_probability_chart(probabilities, labels, title):
     """Create a probability visualization chart"""
+    # Handle None values in probabilities
+    safe_probabilities = [p if p is not None else 0 for p in probabilities]
+    safe_text = [f'{p:.1%}' if p is not None else 'N/A' for p in probabilities]
+    
     fig = go.Figure(data=[
         go.Bar(
             x=labels,
-            y=probabilities,
+            y=safe_probabilities,
             marker_color=['#667eea', '#764ba2', '#f093fb'],
-            text=[f'{p:.1%}' for p in probabilities],
+            text=safe_text,
             textposition='auto',
         )
     ])
@@ -248,9 +252,9 @@ def main():
                             # Win probabilities chart
                             if all(key in prediction for key in ['home_win_probability', 'draw_probability', 'away_win_probability']):
                                 probs = [
-                                    prediction['home_win_probability'],
-                                    prediction['draw_probability'],
-                                    prediction['away_win_probability']
+                                    prediction.get('home_win_probability'),
+                                    prediction.get('draw_probability'),
+                                    prediction.get('away_win_probability')
                                 ]
                                 labels = ['Home Win', 'Draw', 'Away Win']
                                 
