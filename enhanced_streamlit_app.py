@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import requests
 import json
+import os
 from datetime import datetime, timedelta
 import plotly.express as px
 import plotly.graph_objects as go
@@ -59,38 +60,27 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # API Configuration
-API_BASE_URL = "http://localhost:8000"  # Update this when deployed
+API_BASE_URL = os.getenv("API_BASE_URL", "https://prosora-sports-api.onrender.com")  # Default to Render deployment
 
 class PredictionAPI:
     def __init__(self, base_url):
         self.base_url = base_url
     
-    def get_fixtures(self, league_code=None, days_ahead=7):
+    def get_fixtures(self, league_code="E0", days_ahead=7):
         """Get upcoming fixtures"""
         try:
-            params = {"days_ahead": days_ahead}
-            if league_code:
-                params["league_code"] = league_code
-            
-            response = requests.get(f"{self.base_url}/fixtures", params=params)
+            response = requests.get(f"{self.base_url}/fixtures/{league_code}?days={days_ahead}")
             if response.status_code == 200:
                 return response.json()
-            return []
+            return {"fixtures": [], "count": 0}
         except Exception as e:
             st.error(f"Error fetching fixtures: {str(e)}")
-            return []
+            return {"fixtures": [], "count": 0}
     
-    def get_over_under_prediction(self, home_team, away_team, league_code):
+    def get_over_under_prediction(self, home_team, away_team, league_code="E0"):
         """Get over/under 2.5 goals prediction"""
         try:
-            response = requests.post(
-                f"{self.base_url}/predict/over-under",
-                json={
-                    "home_team": home_team,
-                    "away_team": away_team,
-                    "league_code": league_code
-                }
-            )
+            response = requests.get(f"{self.base_url}/predict/over-under/{home_team}/{away_team}?league={league_code}")
             if response.status_code == 200:
                 return response.json()
             return None
@@ -98,17 +88,10 @@ class PredictionAPI:
             st.error(f"Error getting over/under prediction: {str(e)}")
             return None
     
-    def get_exact_score_prediction(self, home_team, away_team, league_code):
+    def get_exact_score_prediction(self, home_team, away_team):
         """Get exact score prediction"""
         try:
-            response = requests.post(
-                f"{self.base_url}/predict/exact-score",
-                json={
-                    "home_team": home_team,
-                    "away_team": away_team,
-                    "league_code": league_code
-                }
-            )
+            response = requests.get(f"{self.base_url}/predict/exact-score/{home_team}/{away_team}")
             if response.status_code == 200:
                 return response.json()
             return None
@@ -116,17 +99,10 @@ class PredictionAPI:
             st.error(f"Error getting exact score prediction: {str(e)}")
             return None
     
-    def get_combined_prediction(self, home_team, away_team, league_code):
+    def get_combined_prediction(self, home_team, away_team, league_code="E0"):
         """Get combined prediction"""
         try:
-            response = requests.post(
-                f"{self.base_url}/predict/combined",
-                json={
-                    "home_team": home_team,
-                    "away_team": away_team,
-                    "league_code": league_code
-                }
-            )
+            response = requests.get(f"{self.base_url}/predict/combined/{home_team}/{away_team}?league={league_code}")
             if response.status_code == 200:
                 return response.json()
             return None
