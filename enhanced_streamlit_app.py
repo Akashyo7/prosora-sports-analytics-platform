@@ -88,10 +88,10 @@ class PredictionAPI:
             st.error(f"Error getting over/under prediction: {str(e)}")
             return None
     
-    def get_exact_score_prediction(self, home_team, away_team):
+    def get_exact_score_prediction(self, home_team, away_team, league_code="E0"):
         """Get exact score prediction"""
         try:
-            response = requests.get(f"{self.base_url}/predict/exact-score/{home_team}/{away_team}")
+            response = requests.get(f"{self.base_url}/predict/exact-score/{home_team}/{away_team}?league={league_code}")
             if response.status_code == 200:
                 return response.json()
             return None
