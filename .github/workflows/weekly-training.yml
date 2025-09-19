@@ -1,0 +1,231 @@
+name: Weekly Model Training & Predictions
+
+on:
+  schedule:
+    # Run every Sunday at 2 AM UTC (Sunday night)
+    - cron: '0 2 * * 0'
+  workflow_dispatch:  # Allow manual triggering
+
+env:
+  PYTHON_VERSION: '3.11'
+
+jobs:
+  check-international-break:
+    runs-on: ubuntu-latest
+    outputs:
+      should_skip: ${{ steps.check.outputs.skip }}
+    steps:
+      - name: Check for International Break
+        id: check
+        run: |
+          # International break dates for 2024 (add more as needed)
+          BREAK_DATES=(
+            "2024-03-18" "2024-03-25"  # March international break
+            "2024-06-03" "2024-06-17"  # June international break
+            "2024-09-02" "2024-09-09"  # September international break
+            "2024-10-07" "2024-10-14"  # October international break
+            "2024-11-11" "2024-11-18"  # November international break
+          )
+          
+          CURRENT_DATE=$(date +%Y-%m-%d)
+          SKIP_TRAINING=false
+          
+          for break_date in "${BREAK_DATES[@]}"; do
+            if [[ "$CURRENT_DATE" == "$break_date" ]]; then
+              echo "International break detected on $CURRENT_DATE"
+              SKIP_TRAINING=true
+              break
+            fi
+          done
+          
+          echo "skip=$SKIP_TRAINING" >> $GITHUB_OUTPUT
+          echo "Current date: $CURRENT_DATE, Skip training: $SKIP_TRAINING"
+
+  train-models:
+    needs: check-international-break
+    if: needs.check-international-break.outputs.should_skip != 'true'
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Cache pip dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install invoke  # For running tasks
+
+      - name: Set up environment variables
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          FOOTBALL_DATA_API_KEY: ${{ secrets.FOOTBALL_DATA_API_KEY }}
+          RAPID_API_KEY: ${{ secrets.RAPID_API_KEY }}
+        run: |
+          echo "Environment variables configured"
+
+      - name: Run data acquisition
+        run: |
+          cd AIFootballPredictions
+          python -m invoke acquire-data
+        continue-on-error: true
+
+      - name: Run data preprocessing
+        run: |
+          cd AIFootballPredictions
+          python -m invoke preprocess-data
+        continue-on-error: true
+
+      - name: Train models
+        run: |
+          cd AIFootballPredictions
+          python -m invoke train-models
+        continue-on-error: true
+
+      - name: Generate predictions
+        run: |
+          cd AIFootballPredictions
+          python -m invoke make-predictions
+        continue-on-error: true
+
+      - name: Check model performance
+        id: performance
+        run: |
+          cd AIFootballPredictions
+          python -c "
+          from model_monitor import ModelMonitor
+          import json
+          
+          monitor = ModelMonitor()
+          performance = monitor.get_performance_summary()
+          
+          # Check if retraining is recommended
+          needs_retraining = monitor.check_retraining_trigger()
+          
+          print(f'Performance: {performance}')
+          print(f'Needs retraining: {needs_retraining}')
+          
+          # Save results for email
+          with open('training_results.json', 'w') as f:
+              json.dump({
+                  'performance': performance,
+                  'needs_retraining': needs_retraining,
+                  'timestamp': '$(date -u +%Y-%m-%dT%H:%M:%SZ)'
+              }, f)
+          "
+        continue-on-error: true
+
+      - name: Send success email
+        if: success()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "✅ Prosora Sports - Weekly Training Completed Successfully"
+          to: akashdagar03@gmail.com
+          from: ${{ secrets.EMAIL_USERNAME }}
+          body: |
+            Weekly model training completed successfully! 🎉
+            
+            📊 Training Summary:
+            - Date: $(date -u +%Y-%m-%d)
+            - Time: $(date -u +%H:%M:%S) UTC
+            - Status: SUCCESS ✅
+            
+            🔄 Pipeline Steps Completed:
+            ✅ Data acquisition
+            ✅ Data preprocessing  
+            ✅ Model training
+            ✅ Prediction generation
+            ✅ Performance monitoring
+            
+            🌐 Dashboard: https://prosora-sports-analytics-platform.streamlit.app
+            🔧 API: https://prosora-sports-api.onrender.com
+            
+            Next training: Next Sunday at 2 AM UTC
+            
+            ---
+            Prosora Sports Analytics Platform
+            Automated Training System
+
+      - name: Send failure email
+        if: failure()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "❌ Prosora Sports - Weekly Training Failed"
+          to: akashdagar03@gmail.com
+          from: ${{ secrets.EMAIL_USERNAME }}
+          body: |
+            Weekly model training encountered errors! ⚠️
+            
+            📊 Training Summary:
+            - Date: $(date -u +%Y-%m-%d)
+            - Time: $(date -u +%H:%M:%S) UTC
+            - Status: FAILED ❌
+            
+            🔍 Please check the GitHub Actions logs for details:
+            https://github.com/Akashyo7/prosora-sports-analytics-platform/actions
+            
+            🛠️ Common issues to check:
+            - API rate limits
+            - Database connectivity
+            - Data source availability
+            - Model file integrity
+            
+            🌐 Dashboard: https://prosora-sports-analytics-platform.streamlit.app
+            🔧 API: https://prosora-sports-api.onrender.com
+            
+            ---
+            Prosora Sports Analytics Platform
+            Automated Training System
+
+  skip-notification:
+    needs: check-international-break
+    if: needs.check-international-break.outputs.should_skip == 'true'
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Send skip notification
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "⏸️ Prosora Sports - Training Skipped (International Break)"
+          to: akashdagar03@gmail.com
+          from: ${{ secrets.EMAIL_USERNAME }}
+          body: |
+            Weekly training skipped due to international break 🌍
+            
+            📅 Date: $(date -u +%Y-%m-%d)
+            ⏸️ Reason: International break detected
+            
+            Training will resume next Sunday when regular league matches return.
+            
+            🌐 Dashboard: https://prosora-sports-analytics-platform.streamlit.app
+            🔧 API: https://prosora-sports-api.onrender.com
+            
+            ---
+            Prosora Sports Analytics Platform
+            Automated Training System

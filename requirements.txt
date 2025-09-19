@@ -18,6 +18,7 @@ scikit-optimize
 # Visualization
 seaborn
 matplotlib
+plotly>=5.0.0
 
 # API Framework
 fastapi>=0.104.0
@@ -37,6 +38,9 @@ psycopg2-binary
 # Development and Deployment
 python-multipart
 python-dotenv
+
+# Task automation (for GitHub Actions)
+invoke>=2.0.0
 
 # Additional utilities
 python-dateutil
