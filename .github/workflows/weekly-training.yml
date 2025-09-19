@@ -105,27 +105,43 @@ jobs:
       - name: Check model performance
         id: performance
         run: |
-          cd AIFootballPredictions
           python -c "
-          from model_monitor import ModelMonitor
-          import json
+          import sys
+          import os
+          sys.path.append('.')
+          sys.path.append('./AIFootballPredictions')
           
-          monitor = ModelMonitor()
-          performance = monitor.get_performance_summary()
-          
-          # Check if retraining is recommended
-          needs_retraining = monitor.check_retraining_trigger()
-          
-          print(f'Performance: {performance}')
-          print(f'Needs retraining: {needs_retraining}')
-          
-          # Save results for email
-          with open('training_results.json', 'w') as f:
-              json.dump({
-                  'performance': performance,
-                  'needs_retraining': needs_retraining,
-                  'timestamp': '$(date -u +%Y-%m-%dT%H:%M:%SZ)'
-              }, f)
+          try:
+              from model_monitor import ModelMonitor
+              import json
+              
+              monitor = ModelMonitor()
+              performance = monitor.get_performance_summary()
+              
+              # Check if retraining is recommended
+              needs_retraining = monitor.check_retraining_trigger()
+              
+              print(f'Performance: {performance}')
+              print(f'Needs retraining: {needs_retraining}')
+              
+              # Save results for email
+              with open('training_results.json', 'w') as f:
+                  json.dump({
+                      'performance': performance,
+                      'needs_retraining': needs_retraining,
+                      'timestamp': '$(date -u +%Y-%m-%dT%H:%M:%SZ)'
+                  }, f)
+          except ImportError as e:
+              print(f'Warning: Could not import model_monitor: {e}')
+              print('Continuing without performance monitoring...')
+              # Create dummy results file
+              with open('training_results.json', 'w') as f:
+                  json.dump({
+                      'performance': {'accuracy': 0.0, 'predictions': 0},
+                      'needs_retraining': False,
+                      'timestamp': '$(date -u +%Y-%m-%dT%H:%M:%SZ)',
+                      'note': 'Performance monitoring unavailable'
+                  }, f)
           "
         continue-on-error: true
 
