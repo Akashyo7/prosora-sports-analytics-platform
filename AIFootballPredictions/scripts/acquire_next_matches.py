@@ -28,6 +28,8 @@ import argparse
 
 # Load environment variables from a .env file located in the home directory
 load_dotenv(dotenv_path=os.path.expanduser("~/.env"))
+# Also try to load from project root .env file
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), '.env'))
 
 # Parameters
 API_KEY = os.getenv("API_FOOTBALL_DATA")
