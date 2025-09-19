@@ -73,7 +73,7 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
-          FOOTBALL_DATA_API_KEY: ${{ secrets.FOOTBALL_DATA_API_KEY }}
+          API_FOOTBALL_DATA: ${{ secrets.API_FOOTBALL_DATA }}
           RAPID_API_KEY: ${{ secrets.RAPID_API_KEY }}
         run: |
           echo "Environment variables configured"
