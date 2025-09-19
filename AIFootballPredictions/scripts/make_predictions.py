@@ -183,6 +183,16 @@ def main(input_leagues_models_dir: str, input_data_predict_dir: str, final_predi
         print("Loading JSON file with upcoming matches...\n")
         with open(next_matches, 'r', encoding='utf-16') as json_file:
             competitions = json.load(json_file)
+    except FileNotFoundError:
+        print(f"Warning: {next_matches} not found. Creating empty competitions structure for predictions...")
+        # Create a fallback structure when the JSON file is missing
+        competitions = {
+            'E0': {'name': 'Premier League', 'next_matches': []},
+            'SP1': {'name': 'La Liga', 'next_matches': []},
+            'I1': {'name': 'Serie A', 'next_matches': []},
+            'D1': {'name': 'Bundesliga', 'next_matches': []},
+            'F1': {'name': 'Ligue 1', 'next_matches': []}
+        }
     except Exception as e:
         raise Exception(f"Error loading JSON file: {e}")
 

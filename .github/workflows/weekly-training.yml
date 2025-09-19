@@ -96,6 +96,12 @@ jobs:
           python -m invoke --search-root scripts train-models
         continue-on-error: true
 
+      - name: Acquire next matches
+        run: |
+          cd AIFootballPredictions
+          python -m invoke --search-root scripts acquire-next-matches
+        continue-on-error: true
+
       - name: Generate predictions
         run: |
           cd AIFootballPredictions
